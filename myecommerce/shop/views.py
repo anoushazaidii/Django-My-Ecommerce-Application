@@ -1,10 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Product
+import math
+
 # Create your views here.
 def index(request):
-    products = Product.objects.all()  # Fetch all Product objects from the database
-    return render(request,"shop/index.html",{'products': products})
+    products = Product.objects.all()
+    print(products)
+    n = len(products)
+    nSlides = n//4 + math.ceil((n/4)-(n//4))
+    params = {'no_of_slides':nSlides, 'range': range(1,nSlides),'product': products}
+    return render(request, 'shop/indexV2.html', params)
 
 def about(request):
     return render(request,"shop/about.html")

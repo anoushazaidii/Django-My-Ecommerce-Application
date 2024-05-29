@@ -8,7 +8,7 @@ class Product(models.Model):
     product_category = models.CharField(max_length=50,default="")
     product_sub_category = models.CharField(max_length=50,default="")
     product_pub_date = models.DateField
-    product_image = models.ImageField(upload_to="shop/images",default="")
+    image= models.ImageField(upload_to="shop/images",default="")
     product_price = models.IntegerField(default=0)
     
     def __str__(self):
