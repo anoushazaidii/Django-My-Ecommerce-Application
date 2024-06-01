@@ -29,8 +29,11 @@ def tracker(request):
 def search(request):
     return render(request,"shop/search.html")
 
-def productview(request):
-    return render(request,"shop/prodview.html")
+def productView(request,myid):
+    product = Product.objects.filter(id=myid)
+    print(product,myid)
+
+    return render(request,"shop/prodview.html",{'product':product[0]})
 
 def checkout(request):
     return render(request,"shop/checkout.html")
