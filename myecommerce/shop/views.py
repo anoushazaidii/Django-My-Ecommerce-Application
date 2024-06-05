@@ -1,9 +1,9 @@
+import json
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Orders, Product,Contact
+from .models import Orders, Product,Contact,OrderUpdate
 import math
 
-# Create your views here.
 def index(request):
     allProds = []
     catProds = Product.objects.values("product_category","id")
@@ -31,8 +31,26 @@ def contact(request):
         print(contact)
     return render(request,"shop/contactus.html")
 
+
 def tracker(request):
-    return render(request,"shop/tracker.html")
+    if request.method=="POST":
+        orderId = request.POST.get('orderId', '')
+        email = request.POST.get('email', '')
+        try:
+            order = Orders.objects.filter(order_id=orderId, email=email)
+            if len(order)>0:
+                update = OrderUpdate.objects.filter(order_id=orderId)
+                updates = []
+                for item in update:
+                    updates.append({'text': item.update_desc, 'time': item.timestamp})
+                    response = json.dumps(updates, default=str)
+                return HttpResponse(response)
+            else:
+                return HttpResponse('{}')
+        except Exception as e:
+            return HttpResponse('{}')
+
+    return render(request, 'shop/tracker.html')
 
 def search(request):
     return render(request,"shop/search.html")
@@ -40,7 +58,6 @@ def search(request):
 def productView(request,myid):
     product = Product.objects.filter(id=myid)
     print(product,myid)
-
     return render(request,"shop/prodview.html",{'product':product[0]})
 
 def checkout(request):
@@ -56,10 +73,15 @@ def checkout(request):
         order = Orders(items_json=items_json, name=name, email=email, address=address, city=city,
                        state=state, zip_code=zip_code, phone=phone)
         order.save()
+        print("order saved")
+        update = OrderUpdate(order_id=order.order_id,update_desc="The order has been placed")
+        update.save()
+        print("update saveed")
         thank = True
         id = order.order_id
         return render(request, 'shop/checkout.html', {'thank':thank, 'id': id})
     return render(request, 'shop/checkout.html')
+
 def favorites(request):
     return render(request,"shop/favorites.html")
 
