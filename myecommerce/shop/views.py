@@ -29,6 +29,9 @@ def contact(request):
         contact = Contact(name=name,email=email,phone=phone,desc=desc)
         contact.save()
         print(contact)
+        thank = True
+        return render(request, 'shop/contactus.html', {'thank':thank})
+
     return render(request,"shop/contactus.html")
 
 
@@ -43,7 +46,7 @@ def tracker(request):
                 updates = []
                 for item in update:
                     updates.append({'text': item.update_desc, 'time': item.timestamp})
-                    response = json.dumps(updates, default=str)
+                    response = json.dumps([updates, order[0].items_json], default=str)
                 return HttpResponse(response)
             else:
                 return HttpResponse('{}')

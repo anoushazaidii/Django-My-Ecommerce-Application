@@ -30,3 +30,12 @@
     </form>
 </div>
 {% endblock %}
+{% block js %}
+<script>
+    {% if thank %}
+    alert('Thanks for contacting us. Our team will get back to you shortly');
+    localStorage.clear();
+    document.location = "/shop";
+    {% endif %}
+</script>
+{% endblock %}
